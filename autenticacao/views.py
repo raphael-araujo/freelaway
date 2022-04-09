@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.messages import constants
 
 # Create your views here.
@@ -10,12 +10,13 @@ from django.contrib.messages import constants
 def cadastro(request):
     """view function para a página de cadastro"""
     if request.method == 'GET':
+        if request.user.is_authenticated:
+            return redirect('/plataforma')
         return render(request, 'cadastro.html')
     elif request.method == 'POST':
         username = request.POST['username']  # ou request.POST.get('username')
         senha = request.POST['password']
         confirmar_senha = request.POST['confirm-password']
-        # print(f'{username} | {senha} | {confirmar_senha}')
 
         if senha != confirmar_senha:
             messages.add_message(request, constants.ERROR, 'As senhas não coincidem.')
@@ -34,6 +35,7 @@ def cadastro(request):
         try:
             user = User.objects.create_user(username=username, password=senha)
             user.save()
+            messages.add_message(request, constants.ERROR, 'Usuário criado com sucesso.')
             return redirect('/auth/logar')
 
         except:
@@ -41,4 +43,23 @@ def cadastro(request):
             return redirect('/auth/cadastro')
 
 def logar(request):
-    return HttpResponse('Logar')
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            return redirect('/plataforma')
+        return render(request, 'logar.html')
+
+    elif request.method == 'POST':
+        username = request.POST['username']
+        senha = request.POST['password']
+        print(f'{username} | {senha}')
+        
+        usuario = auth.authenticate(username=username, password=senha)
+        
+        if not usuario:
+            messages.add_message(request, constants.ERROR, 'Nome de usuário ou Senha inválidos')
+            return redirect('/auth/logar')
+        else:
+            auth.login(request, usuario)
+            return redirect('/plataforma')
+
+        # return HttpResponse('Recebido')
