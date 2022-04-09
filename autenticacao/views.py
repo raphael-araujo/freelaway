@@ -62,4 +62,6 @@ def logar(request):
             auth.login(request, usuario)
             return redirect('/plataforma')
 
-        # return HttpResponse('Recebido')
+def sair(request):
+    auth.logout(request)
+    return redirect('/auth/logar')
