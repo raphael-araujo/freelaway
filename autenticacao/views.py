@@ -35,7 +35,7 @@ def cadastro(request):
         try:
             user = User.objects.create_user(username=username, password=senha)
             user.save()
-            messages.add_message(request, constants.ERROR, 'Usuário criado com sucesso.')
+            messages.add_message(request, constants.SUCCESS, 'Usuário criado com sucesso.')
             return redirect('/auth/logar')
 
         except:
@@ -51,10 +51,9 @@ def logar(request):
     elif request.method == 'POST':
         username = request.POST['username']
         senha = request.POST['password']
-        print(f'{username} | {senha}')
-        
+
         usuario = auth.authenticate(username=username, password=senha)
-        
+
         if not usuario:
             messages.add_message(request, constants.ERROR, 'Nome de usuário ou Senha inválidos')
             return redirect('/auth/logar')
