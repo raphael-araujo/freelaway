@@ -4,14 +4,14 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
-class Referencias(models.Model):
+class Referencia(models.Model):
     arquivo = models.FileField(upload_to='referencias')
 
     def __str__(self) -> str:
         return self.arquivo.url
 
 
-class Jobs(models.Model):
+class Job(models.Model):
     categoria_choices = (
         ('D', 'Design'),
         ('EV', 'Edição de Vídeo')
@@ -27,7 +27,7 @@ class Jobs(models.Model):
     categoria = models.CharField(max_length=2, choices=categoria_choices, default='D')
     prazo_entrega = models.DateTimeField()
     preco = models.FloatField()
-    referencias = models.ManyToManyField(Referencias)
+    referencias = models.ManyToManyField(Referencia)
     profissional = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True)
     reservado = models.BooleanField(default=False)
     status = models.CharField(max_length=2, choices=status_choice, default='AA')
