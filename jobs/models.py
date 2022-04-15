@@ -24,7 +24,7 @@ class Job(models.Model):
 
     titulo = models.CharField(max_length=200)
     descricao = models.TextField()
-    categoria = models.CharField(max_length=2, choices=categoria_choices, default='D')
+    categoria = models.CharField(max_length=2, choices=categoria_choices)
     prazo_entrega = models.DateTimeField()
     preco = models.FloatField()
     referencias = models.ManyToManyField(Referencia)
