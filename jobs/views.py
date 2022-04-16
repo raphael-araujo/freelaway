@@ -1,5 +1,6 @@
 from datetime import datetime
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from .models import Job
 
 # Create your views here.
@@ -42,3 +43,14 @@ def encontrar_jobs(request):
             jobs = Job.objects.filter(reservado=False)
 
         return render(request, 'encontrar_jobs.html', {'jobs': jobs})
+
+
+def aceitar_job(request, id):
+    # job = Job.objects.get(id=id)
+    job = get_object_or_404(Job, id=id)
+    job.profissional = request.user
+    job.reservado = True
+    job.save()
+    
+    return redirect('/jobs/encontrar_jobs/')
+    # return HttpResponse(id)
