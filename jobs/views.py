@@ -1,4 +1,7 @@
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.messages import constants
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Job
@@ -46,11 +49,40 @@ def encontrar_jobs(request):
 
 
 def aceitar_job(request, id):
-    # job = Job.objects.get(id=id)
     job = get_object_or_404(Job, id=id)
     job.profissional = request.user
     job.reservado = True
     job.save()
-    
+
     return redirect('/jobs/encontrar_jobs/')
-    # return HttpResponse(id)
+
+
+def perfil(request):
+    if request.method == 'GET':
+        jobs = Job.objects.filter(profissional=request.user)
+
+        return render(request, 'perfil.html', {'jobs': jobs})
+
+    elif request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        primeiro_nome = request.POST['primeiro_nome']
+        ultimo_nome = request.POST['ultimo_nome']
+
+        usuario = User.objects.filter(
+            username=username).exclude(id=request.user.id)
+
+        if usuario.exists():
+            messages.add_message(request, constants.ERROR,
+                                 'Já existe um usuário com esse Username.')
+            return redirect('/jobs/perfil/')
+
+        request.user.username = username
+        request.user.email = email
+        request.user.first_name = primeiro_nome
+        request.user.last_name = ultimo_nome
+        request.user.save()
+
+        messages.add_message(request, constants.SUCCESS,
+                             'Dados alterados com sucesso.')
+        return redirect('/jobs/perfil/')
