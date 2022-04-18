@@ -1,5 +1,4 @@
 from django.shortcuts import redirect, redirect, render
-from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages, auth
 from django.contrib.messages import constants
@@ -45,7 +44,7 @@ def cadastro(request):
 def logar(request):
     if request.method == 'GET':
         if request.user.is_authenticated:
-            return redirect('/plataforma')
+            return redirect('/jobs/encontrar_jobs/')
         return render(request, 'logar.html')
 
     elif request.method == 'POST':
@@ -59,7 +58,7 @@ def logar(request):
             return redirect('/auth/logar')
         else:
             auth.login(request, usuario)
-            return redirect('/plataforma')
+            return redirect('/jobs/encontrar_jobs/')
 
 def sair(request):
     auth.logout(request)
